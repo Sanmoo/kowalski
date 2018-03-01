@@ -1,0 +1,35 @@
+version: '3'
+
+# Containers we are going to run
+services:
+  kowalski:
+    build:
+      context: .
+    environment:
+      KOWALSKI_LOGIN_ADURL: ldap://<url_aki>
+      KOWALSKI_LOGIN_ADDOMAIN: <domain>.<com>
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  kowalski-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: kowalskidb
+    restart: always
+    volumes:
+      - kowalski-db-data:/var/lib/mysql
+  ldap:
+    image: osixia/openldap:1.1.11
+    volumes:
+      - kowalski-devldap-data-files:/var/lib/ldap
+      - kowalski-devldap-config-data:/etc/ldap/slapd.d
+  ldapphpmanager:
+    
+# Define the volumes
+volumes:
+  kowalski-db-data:
+  kowalski-devldap-data:
+  kowalski-devldap-config-data:
